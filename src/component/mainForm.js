@@ -63,7 +63,28 @@ function MainForm() {
             Accept: 'application/json',
           }})
         if(sendData.data){
-            alert("data sent")
+          
+            
+            const sendMail = await axios.post("http://localhost:8800/api/payslip/payslip_mail_send",sendData.data.payslip_save,
+            {headers: {
+                'Access-Control-Allow-Origin': '*',
+                Accept: 'application/json',
+              }})
+              const sendMail_hod = await axios.post("http://localhost:8800/api/payslip/payslip_mail_send_hod",sendData.data.payslip_save,
+            {headers: {
+                'Access-Control-Allow-Origin': '*',
+                Accept: 'application/json',
+              }})
+              
+
+              if(!sendMail.data ){
+                alert("mail not sent")
+              }else if(!sendMail_hod.data){
+                alert("mail to Hod has not sent")
+              }else{
+                window.location.replace("/submitted")
+                // alert("mail sent")
+              }
         }
     }
     // useEffect(() => {

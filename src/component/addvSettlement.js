@@ -17,6 +17,7 @@ import ReactDOM from "react-dom";
 
 
 import { Link, Route, Switch, BrowserRouter } from "react-router-dom";
+import axios from "axios";
 
 function AddvSettlement() {
     let Departement = ['kitchen', 'Deity', 'Flower', 'maintainenace'];
@@ -27,7 +28,14 @@ function AddvSettlement() {
     const [showParticular, setShowParticular] = useState(false);
     const [showDetails,setShowDetails] =useState(false)
     const [val,setVal]=useState({
+        payslip_id:"",
+        name:"",
+        email_id:"",
+        phone:"",
+        department:"",
         amount:"",
+        cost_center:"",
+        type:"",
         details:""
     })
 
@@ -41,9 +49,35 @@ function AddvSettlement() {
         setSlipParticular([...slipParticular, val])
     }
 
-    const fetchAdvSettlement =()=>{
+    const fetchAdvSettlement =async()=>{
+        const fetchAdvSettlement=await axios.get(`http://localhost:8800/api/payslip/fetch_payslip/${val.payslip_id}`)
+        if(fetchAdvSettlement.data){
+            let advSetlData=fetchAdvSettlement.data.data
+            setVal({
+                name:advSetlData?.name,
+                email_id:advSetlData?.email_id,
+                phone:advSetlData?.phone,
+                department:advSetlData?.department,
+                amount:advSetlData?.amount,
+                cost_center:advSetlData?.cost_center,
+                type:advSetlData?.type,
+                details:advSetlData?.details
+                
+            })
+        }
         console.log("in fetchAdvSettlement")
         setShowDetails(true)
+    }
+
+    const updatedvSettlement =async()=>{
+        const updatedvSettlement=await axios.post(`http://localhost:8800/api/payslip/update_payslip/${val.payslip_id}`,{
+            amount:val.amount,
+            details:val.details
+        })
+        if(updatedvSettlement.data){
+            window.location.replace("/submitted")
+           console.log("updated")
+        }    
     }
 
     const handleChange=(event)=>{       
@@ -53,7 +87,9 @@ function AddvSettlement() {
         })
     }
 
-    const handleSendingData=()=>{
+    const handleSendingData=(e)=>{
+        e.preventDefault()
+        updatedvSettlement()
         console.log("send the data")
     }
 
@@ -80,31 +116,31 @@ function AddvSettlement() {
             <Form onSubmit={handleSendingData}>
                 <Form.Group className="mb-3" >
                     <Form.Label style={{ float: 'left' }}> Payslip No</Form.Label>
-                    <Form.Control placeholder="Enter your payslip no." />
+                    <Form.Control placeholder="Enter your payslip no."  onChange={handleChange} value={val.payslip_id} name="payslip_id" />
                 </Form.Group>
                 
                 { showDetails ?
                 <>
                 <Form.Group className="mb-3" >
                     <Form.Label style={{ float: 'left' }} > Name</Form.Label>
-                    <Form.Control placeholder="Enter your Name" readOnly />
+                    <Form.Control placeholder="Enter your Name" readOnly value={val.name}/>
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Label style={{ float: 'left' }} > Email address</Form.Label>
-                    <Form.Control type="email" placeholder="Enter email" readOnly />
+                    <Form.Control type="email" placeholder="Enter email" readOnly value={val.email_id}/>
 
                 </Form.Group>
 
                 <Form.Group className="mb-3" >
                     <Form.Label style={{ float: 'left' }} > Phone Number</Form.Label>
-                    <Form.Control placeholder="Enter your mobile number" readOnly />
+                    <Form.Control placeholder="Enter your mobile number" readOnly value={val.phone}/>
 
                 </Form.Group>
                 <Form.Group className="mb-3" >
                     <Form.Label style={{ float: 'left' }} > Select Departement</Form.Label>
                     <Form.Control
-                        as="select" readOnly
+                        as="select" readOnly value={val.department}
                     >
 
                         {Departement.map((el) => { return <option value={el} key={el}>{el}</option> })}
@@ -119,7 +155,7 @@ function AddvSettlement() {
                 <Form.Group className="mb-3" >
                     <Form.Label style={{ float: 'left' }} > Cost Center</Form.Label>
                     <Form.Control
-                        as="select" readOnly
+                        as="select" readOnly value={val.cost_center}
                     >
                         {costcenter.map((el) => <option value={el} key={el}>{el}</option>)}
                     </Form.Control>
@@ -128,7 +164,7 @@ function AddvSettlement() {
                 <Form.Group className="mb-3" >
                     <Form.Label style={{ float: 'left' }} > Payslip Type</Form.Label>
                     <Form.Control
-                        as="select" readOnly
+                        as="select" readOnly value={val.type}
                     >
                         {payslipType.map((el) => { return <option value={el} key={el}>{el}</option> })}
                     </Form.Control>

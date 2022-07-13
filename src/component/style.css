@@ -1,0 +1,39 @@
+
+
+.main {
+  padding: 60px 0;
+  position: relative;
+}
+
+.container {
+  width: 586px;
+  background: #fff;
+  margin-left: 33%;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -o-border-radius: 10px;
+  -ms-border-radius: 10px;
+}
+
+.appointment-form {
+  padding: 50px 60px 70px 60px;
+  /* background-color: #F7F7F7; */
+}
+
+
+
+.success_text {
+  font-size: 18px;
+}
+
+.mylogo {
+  /* height: 45px; */
+  width: 50px;
+  margin-bottom: 5px;
+}
+
+.oklogo {
+  width: 120px;
+}
+

@@ -16,53 +16,31 @@ import {
 } from "react-bootstrap";
 
 import ReactDOM from "react-dom";
-import Mainform from './component/mainForm';
-import AddvSettlement from "./component/addvSettlement"
-import './App.css';
 
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import Box from '@mui/material/Box';
+import './App.css';
+import Payslip from "./pages/payslip"
+
+import SuccessAlert from "./component/SuccessAlert";
 
 function App() {
 
   const [tabValue, setTabValue] = React.useState('one');
 
-  const handleChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
+  
   return (
     <div className="App">
 
-    <Box sx={{ width: '100%',marginBottom:"20px" }}>
-      <Tabs
-        value={tabValue}
-        onChange={handleChange}
-        aria-label="wrapped label tabs example"
-        centered
-      >
-        <Tab
-          value="one"
-          label="Submit Payslip"
-          
-        />
-        <Tab value="two" label="Advance Settlement" />
-        {/* <Tab value="three" label="Item Three" /> */}
-      </Tabs>
-    </Box>
-
-      {tabValue==="one"?<Mainform/>:<AddvSettlement/>}
-      {/* <Router>       
+   
+      <Router>       
         <Routes>
           <Route>
-                <Route path="/" element={<Mainform/>} />
-                <Route path="/addv_settlement" element={<AddvSettlement/>} />
+                <Route path="/" element={<Payslip/>} />
+                <Route path="/submitted" element={<SuccessAlert/>} />
           </Route>
         </Routes>
 
         
-      </Router> */}
+      </Router>
     </div>
   );
 }
