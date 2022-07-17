@@ -13,8 +13,9 @@ import {
     Container, Form, Button
 } from "react-bootstrap";
 
-import Particulars from "./particulars"
+// import Particulars from "./particulars"
 import ReactDOM from "react-dom";
+import Particulars from "./particulars";
 
 
 import { Link, Route, Switch, BrowserRouter } from "react-router-dom";
@@ -23,9 +24,8 @@ function MainForm() {
     let Departement = ['kitchen', 'Deity', 'Flower', 'maintainenace'];
     let costcenter = ['IIT Dhanbad', 'BIT Sindri', 'ISKCON DHANBAD'];
     let payslipType = ['Billed', 'Advance'];
-
-    const [slipParticular, setSlipParticular] = useState([]);
-    const [showParticular, setShowParticular] = useState(false);
+    // const [key,setKey]=useState(1)
+   
     const [val,setVal]=useState({
         name:"",
         email_id:"",
@@ -33,9 +33,22 @@ function MainForm() {
         department:"",
         amount:"",
         cost_center:"",
+        content:"",
         type:"",
-        details:""
+        details:"",
+        detailContent:[]
     })
+    
+    const [particulars,setParticulars]=useState([])
+
+    const [particularVal,setParticularVal]=useState({
+        key:particulars.length==0 ?1: particulars[particulars?.length-1]?.key+1,
+        itemName:"",
+        quantity:"",
+        amount:"",
+    })
+
+  
 
     const handleChange=(event)=>{       
         setVal({
@@ -44,20 +57,47 @@ function MainForm() {
         })
     }
 
-    let addParticular = (e) => {
-        e.preventDefault()
-        if (!showParticular)
-            setShowParticular(true)
-    };
-
-    const particular_func = (val) => {
-        setSlipParticular([...slipParticular, val])
+    const handleChangeParticulars=(event)=>{
+        setParticularVal({
+            ...particularVal,
+            [event.target.name]:event.target.value
+        })
     }
+
+    const addParticulars=()=>{
+        let tempObj={
+            ...particularVal,
+            key:particulars.length==0 ?1: particulars[particulars?.length-1]?.key+1,
+        }
+        let  tempAr=[...particulars,tempObj]
+        setParticulars(tempAr)
+        setParticularVal({
+            itemName:"",
+            quantity:"",
+            amount:"",
+        })
+    }
+
+ const deleteHandler=(keyVal)=>{
+    setParticulars(prev=>{
+        const updatedAr=prev.filter(el=>el.key!==keyVal )
+        return updatedAr
+    })
+ }
 
     const handleSendingData=async(event)=>{
         event.preventDefault()
+        let oneString="";
+        particulars.map(el=>{
+            oneString+= ""+el.key+". "+el.itemName+"  "+el.quantity+"  "+el.amount+" ,  "
+        })
+        setVal({
+            ...val,
+            details:oneString,
+            detailContent:particulars
+        })
         console.log("send the data")
-        const sendData=await axios.post("http://localhost:8800/api/payslip/new_payslip",val, 
+        const sendData=await axios.post("http://localhost:8800/api/payslip/new_payslip",{...val,status:"pending"}, 
         {headers: {
             'Access-Control-Allow-Origin': '*',
             Accept: 'application/json',
@@ -87,6 +127,14 @@ function MainForm() {
               }
         }
     }
+
+    // const fileHandler=()=>{
+    //     const fileLink=await axios.post("http://localhost:8800/api/googleDrive/generatelink",{
+    //         payslip_id:setVal.pa
+    //     })
+    // }
+
+    
     // useEffect(() => {
     //     setSlipParticular([<Row ><Form.Label style={{ float: 'left' }} > Particular </Form.Label>
     //         <Form.Control
@@ -170,16 +218,37 @@ function MainForm() {
                     </Form.Control>
                 </Form.Group>
 
-                <Form.Group className="mb-3" >
-
-                    <Form.Label style={{ float: 'left' }} >Slip Particular </Form.Label>
-                    <Form.Control as="textarea" rows={3} placeholder="Enter Particular Details" value={val.details} onChange={handleChange} name="details"/>
-
-                    <Form.Control placeholder="Total Amount" value={val.amount} onChange={handleChange} name="amount" />
-
-                </Form.Group>
+                {/* <Form.Group className="mb-3" >
+                
+                </Form.Group> */}
 
                 <Form.Group className="mb-3" >
+                    
+                    <Form.Label style={{ float: 'left' }} >Slip Particular </Form.Label>  
+                    {/* <Container>   
+                        <Row >                           */}
+                            <Form.Control style={{marginBottom:"5px"}} as="textarea" rows={3} placeholder="Enter details" name="itemName" value={particularVal.itemName} onChange={ handleChangeParticulars} />
+                        {/* </Row> */}
+                        {/* <Container>  */}
+                        <Row>
+                           <Col style={{paddingRight:"0px" ,marginRight:"5px"}}>
+                            <Form.Control style={{marginBottom:"5px"}} placeholder="Quantity"  name="quantity" value={particularVal.quantity} onChange={ handleChangeParticulars} /></Col>
+                            <Col style={{padding:"0px" ,marginRight:"5px"}}> <Form.Control style={{marginBottom:"5px"}} placeholder="Amount (in rupees)"  name="amount" value={particularVal.amount} onChange={ handleChangeParticulars} /></Col>
+                            <Col xs lg="2" style={{paddingLeft:"0px"}}> <Button variant="primary" style={{width:"100%"}} onClick={addParticulars}>
+                                Add 
+                            </Button>
+                            </Col>
+                        </Row>
+                        {/* </Container>   */}
+                        { particulars?.map((el)=> <Particulars key={el.key} partiVal={el} deleteHandler={deleteHandler}/>)}
+                    </Form.Group>
+               
+                  
+                <Form.Group className="mb-3" >
+                        {/* <Form.Label style={{ float: 'left' }} > Add File</Form.Label>
+                  <Button  variant="secondary" style={{color:"white", marginRight:"20px"}} onClick={fileHandler}>{' '}
+                       Add File
+                    </Button> */}
                     <Button variant="primary" type="submit" >
                         Submit Request
                     </Button>

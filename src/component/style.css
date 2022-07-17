@@ -37,3 +37,13 @@
   width: 120px;
 }
 
+.goal-item {
+  margin: 10px 0;
+  display: flex;
+  flex-flow: column;
+  background: #e5e5e5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  color: black;
+  padding: 5px 5px;
+  cursor: pointer;
+}
